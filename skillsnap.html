@@ -1,0 +1,2320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillSnap — Learn in 60 Seconds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   CSS CUSTOM PROPERTIES & THEME SYSTEM
+   ============================================================ */
+:root {
+  --accent: #7C6EFF;
+  --accent2: #FF6B6B;
+  --accent3: #00D4AA;
+  --accent4: #FFB347;
+
+  /* Dark theme */
+  --bg: #0A0A0F;
+  --bg2: #13131A;
+  --bg3: #1C1C27;
+  --bg4: #252535;
+  --surface: #1E1E2E;
+  --surface2: #26263A;
+  --border: rgba(255,255,255,0.08);
+  --text: #F0F0FF;
+  --text2: #9898B8;
+  --text3: #5A5A7A;
+  --card-bg: rgba(30,30,46,0.95);
+  --glass: rgba(255,255,255,0.04);
+  --shadow: 0 20px 60px rgba(0,0,0,0.5);
+  --nav-bg: rgba(10,10,15,0.92);
+}
+
+[data-theme="light"] {
+  --bg: #F5F5FF;
+  --bg2: #EEEEFF;
+  --bg3: #E8E8F8;
+  --bg4: #DDDDF0;
+  --surface: #FFFFFF;
+  --surface2: #F0F0FF;
+  --border: rgba(0,0,0,0.08);
+  --text: #0A0A1F;
+  --text2: #4A4A6A;
+  --text3: #9898B8;
+  --card-bg: rgba(255,255,255,0.97);
+  --glass: rgba(0,0,0,0.02);
+  --shadow: 0 20px 60px rgba(124,110,255,0.12);
+  --nav-bg: rgba(245,245,255,0.92);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+  padding-bottom: 80px;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
+
+/* ============================================================
+   TOP HEADER
+   ============================================================ */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.xp-badge {
+  background: linear-gradient(135deg, var(--accent4), #FF8C00);
+  color: #000;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.streak-badge {
+  background: linear-gradient(135deg, var(--accent2), #FF4444);
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.theme-toggle {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+  color: var(--text);
+}
+.theme-toggle:hover { background: var(--accent); color: #fff; transform: scale(1.1); }
+
+/* ============================================================
+   MAIN CONTENT WRAPPER
+   ============================================================ */
+.app-wrapper {
+  max-width: 480px;
+  margin: 0 auto;
+  padding-top: 70px;
+}
+
+/* ============================================================
+   SECTIONS (pages)
+   ============================================================ */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ============================================================
+   INTEREST ONBOARDING POPUP
+   ============================================================ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.overlay.hidden { display: none; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+.popup {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 420px;
+  animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.popup h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+.popup p { color: var(--text2); font-size: 14px; margin-bottom: 24px; }
+
+.interest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.interest-chip {
+  background: var(--bg3);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.interest-chip:hover { transform: scale(1.05); }
+.interest-chip.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  transform: scale(1.05);
+}
+.interest-chip .emoji { font-size: 22px; }
+
+.btn-primary {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--accent), #5A4DFF);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(124,110,255,0.4); }
+.btn-primary:active { transform: translateY(0); }
+
+/* ============================================================
+   AUTH OVERLAY
+   ============================================================ */
+.auth-popup {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 400px;
+  animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.auth-tabs {
+  display: flex;
+  background: var(--bg3);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.auth-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.auth-form { display: none; }
+.auth-form.active { display: block; }
+
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.form-group input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: border 0.2s;
+}
+.form-group input:focus { border-color: var(--accent); }
+
+/* ============================================================
+   SKILL FEED
+   ============================================================ */
+.feed-header {
+  padding: 16px 20px 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.feed-filter {
+  display: flex;
+  gap: 8px;
+  padding: 0 20px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.feed-filter::-webkit-scrollbar { display: none; }
+
+.filter-chip {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-chip.active, .filter-chip:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* ============================================================
+   SKILL CARD
+   ============================================================ */
+.skill-card {
+  margin: 0 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+  animation: slideUp 0.4s ease backwards;
+}
+
+.skill-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+
+.card-video-wrap {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 */
+  background: var(--bg3);
+  overflow: hidden;
+}
+
+.card-video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.card-video-thumb {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.play-btn {
+  width: 60px; height: 60px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.play-btn:hover { transform: scale(1.1); background: #fff; }
+
+.card-duration {
+  position: absolute;
+  bottom: 10px; right: 10px;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+}
+
+.card-category-badge {
+  position: absolute;
+  top: 10px; left: 10px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
+}
+
+.card-body { padding: 16px; }
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.creator-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.creator-name { font-size: 12px; color: var(--text2); font-weight: 500; }
+.creator-verified { color: var(--accent3); font-size: 13px; }
+
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 14px; }
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.tag {
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(124,110,255,0.12);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.action-btn:hover { background: var(--bg3); color: var(--text); }
+
+.action-btn.liked { background: rgba(255,107,107,0.15); color: var(--accent2); border-color: var(--accent2); }
+.action-btn.saved { background: rgba(124,110,255,0.15); color: var(--accent); border-color: var(--accent); }
+
+.action-btn-icon { font-size: 16px; }
+
+.spacer { flex: 1; }
+
+.xp-reward {
+  font-size: 11px;
+  color: var(--accent4);
+  font-weight: 700;
+  background: rgba(255,179,71,0.12);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* ============================================================
+   COMMENTS PANEL
+   ============================================================ */
+.comments-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 150;
+  display: flex;
+  align-items: flex-end;
+  animation: fadeIn 0.2s ease;
+}
+
+.comments-overlay.hidden { display: none; }
+
+.comments-panel {
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.comments-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.comments-header h3 { font-size: 16px; font-weight: 700; }
+
+.close-btn {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--text);
+  transition: all 0.2s;
+}
+.close-btn:hover { background: var(--accent); color: #fff; }
+
+.comments-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.comment-item {
+  display: flex;
+  gap: 10px;
+  animation: slideDown 0.2s ease;
+}
+
+.comment-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent3), var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.comment-bubble {
+  background: var(--bg3);
+  border-radius: 0 14px 14px 14px;
+  padding: 10px 14px;
+  flex: 1;
+}
+
+.comment-user { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.comment-text { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.comment-time { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+.comment-input-wrap {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.comment-input {
+  flex: 1;
+  padding: 12px 16px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+.comment-input:focus { border-color: var(--accent); }
+
+.send-btn {
+  width: 42px; height: 42px;
+  background: var(--accent);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  transition: all 0.2s;
+}
+.send-btn:hover { transform: scale(1.1); background: #5A4DFF; }
+
+/* ============================================================
+   TRENDING SECTION
+   ============================================================ */
+.trending-header {
+  padding: 20px 20px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.trending-sort {
+  display: flex;
+  gap: 6px;
+  padding: 0 20px 16px;
+}
+
+.sort-btn {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sort-btn.active, .sort-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.trending-card {
+  margin: 0 16px 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  animation: slideUp 0.3s ease backwards;
+}
+
+.trending-card:hover { transform: translateX(4px); box-shadow: var(--shadow); }
+
+.trending-rank {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text3);
+  width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.trending-rank.top { color: var(--accent4); }
+
+.trending-thumb {
+  width: 72px; height: 56px;
+  border-radius: 12px;
+  background: var(--bg3);
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.trending-info { flex: 1; }
+.trending-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.trending-stats { display: flex; gap: 12px; }
+.trending-stat { font-size: 11px; color: var(--text2); display: flex; align-items: center; gap: 4px; }
+
+.trending-fire {
+  font-size: 20px;
+  animation: bounce 1s infinite;
+}
+
+/* ============================================================
+   UPLOAD / CREATOR DASHBOARD
+   ============================================================ */
+.upload-header {
+  padding: 20px 20px 10px;
+  text-align: center;
+}
+
+.upload-header h2 { font-size: 24px; font-weight: 800; }
+.upload-header p { color: var(--text2); font-size: 14px; margin-top: 6px; }
+
+.monetize-banner {
+  margin: 0 16px 20px;
+  background: linear-gradient(135deg, #FFB347, #FF6B6B);
+  border-radius: 18px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.monetize-icon { font-size: 32px; }
+.monetize-text h4 { font-weight: 700; color: #fff; font-size: 15px; }
+.monetize-text p { color: rgba(255,255,255,0.8); font-size: 12px; }
+.monetize-badge {
+  margin-left: auto;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.upload-form {
+  margin: 0 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.upload-form .form-group { margin-bottom: 18px; }
+
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text2);
+}
+
+.upload-zone:hover { border-color: var(--accent); color: var(--accent); }
+.upload-zone .icon { font-size: 36px; margin-bottom: 10px; }
+.upload-zone p { font-size: 14px; font-weight: 500; }
+.upload-zone span { font-size: 12px; color: var(--text3); }
+
+textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+  transition: border 0.2s;
+  min-height: 80px;
+}
+textarea:focus { border-color: var(--accent); }
+
+select {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+
+.publish-stats {
+  margin: 16px 16px 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 12px;
+  text-align: center;
+}
+.stat-card .stat-num { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--accent); }
+.stat-card .stat-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+/* ============================================================
+   PROFILE SECTION
+   ============================================================ */
+.profile-hero {
+  background: linear-gradient(135deg, var(--accent), #5A4DFF, var(--accent2));
+  padding: 32px 20px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.profile-avatar-wrap { position: relative; display: inline-block; margin-bottom: 14px; }
+
+.profile-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: 3px solid rgba(255,255,255,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 800;
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  margin: 0 auto;
+}
+
+.profile-level {
+  position: absolute;
+  bottom: -2px; right: -2px;
+  background: var(--accent4);
+  color: #000;
+  font-size: 11px;
+  font-weight: 800;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+}
+
+.profile-name { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.profile-handle { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 16px; }
+
+.profile-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.profile-stat { text-align: center; }
+.profile-stat-num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: #fff; }
+.profile-stat-label { font-size: 11px; color: rgba(255,255,255,0.7); }
+
+/* XP Progress */
+.xp-progress-wrap {
+  margin: 20px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.xp-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.xp-progress-title { font-weight: 700; font-size: 15px; }
+.xp-progress-val { font-size: 13px; color: var(--text2); }
+
+.progress-bar {
+  height: 10px;
+  background: var(--bg3);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  border-radius: 10px;
+  transition: width 1s ease;
+}
+
+/* Achievements */
+.achievements-wrap {
+  margin: 0 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.achievements-title { font-weight: 700; font-size: 15px; margin-bottom: 14px; }
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.achievement {
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.achievement:hover { transform: scale(1.1); }
+.achievement .badge { font-size: 28px; margin-bottom: 4px; }
+.achievement .badge-name { font-size: 10px; color: var(--text2); font-weight: 600; }
+.achievement.locked { opacity: 0.3; filter: grayscale(1); }
+
+/* Leaderboard */
+.leaderboard-wrap {
+  margin: 0 16px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.leaderboard-header {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.leaderboard-item {
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.leaderboard-item:last-child { border-bottom: none; }
+.leaderboard-item:hover { background: var(--glass); }
+.leaderboard-item.me { background: rgba(124,110,255,0.08); }
+
+.lb-rank { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; width: 30px; text-align: center; }
+.lb-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; }
+.lb-name { flex: 1; font-weight: 600; font-size: 14px; }
+.lb-xp { font-weight: 700; color: var(--accent4); font-size: 14px; }
+
+/* ============================================================
+   BOTTOM NAV
+   ============================================================ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 100;
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  height: 70px;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 14px;
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+}
+
+.nav-item:hover { color: var(--accent); background: rgba(124,110,255,0.08); }
+.nav-item.active { color: var(--accent); }
+
+.nav-icon { font-size: 22px; transition: transform 0.2s; }
+.nav-item.active .nav-icon { transform: scale(1.15); }
+.nav-label { font-size: 10px; font-weight: 600; }
+
+.nav-upload-btn {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--accent), #5A4DFF);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #fff;
+  margin-bottom: 4px;
+  box-shadow: 0 4px 15px rgba(124,110,255,0.4);
+  transition: all 0.2s;
+}
+.nav-item:hover .nav-upload-btn { transform: rotate(45deg) scale(1.1); }
+
+/* ============================================================
+   TOAST NOTIFICATIONS
+   ============================================================ */
+.toast-container {
+  position: fixed;
+  top: 80px; left: 50%; 
+  transform: translateX(-50%);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  align-items: center;
+  width: 100%;
+  max-width: 380px;
+  padding: 0 20px;
+}
+
+.toast {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  animation: slideDown 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: auto;
+  white-space: nowrap;
+}
+
+.toast.success { border-color: var(--accent3); }
+.toast.error { border-color: var(--accent2); }
+.toast.info { border-color: var(--accent); }
+.toast.xp { border-color: var(--accent4); background: linear-gradient(135deg, rgba(255,179,71,0.15), var(--surface)); }
+
+.toast-icon { font-size: 18px; }
+.toast-fade { opacity: 0; transition: opacity 0.3s; }
+
+/* ============================================================
+   SKELETON LOADING
+   ============================================================ */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg3) 0%, var(--bg4) 50%, var(--bg3) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+}
+
+.skeleton-card {
+  margin: 0 16px 20px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.skeleton-video { height: 200px; }
+.skeleton-body { padding: 16px; }
+.skeleton-line { height: 14px; margin-bottom: 10px; }
+.skeleton-line.short { width: 60%; }
+.skeleton-line.medium { width: 80%; }
+
+/* ============================================================
+   UTILITY CLASSES
+   ============================================================ */
+.hidden { display: none !important; }
+.text-accent { color: var(--accent); }
+.text-accent2 { color: var(--accent2); }
+.text-accent3 { color: var(--accent3); }
+.text-accent4 { color: var(--accent4); }
+
+/* ============================================================
+   AI FEED SECTION
+   ============================================================ */
+.ai-banner {
+  margin: 0 16px 16px;
+  background: linear-gradient(135deg, rgba(124,110,255,0.15), rgba(0,212,170,0.1));
+  border: 1px solid rgba(124,110,255,0.3);
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ai-icon { font-size: 28px; animation: pulse 2s infinite; }
+.ai-text h4 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.ai-text p { font-size: 12px; color: var(--text2); }
+.ai-refresh {
+  margin-left: auto;
+  padding: 6px 12px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.ai-refresh:hover { background: #5A4DFF; transform: scale(1.05); }
+
+/* ============================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================ */
+@media (min-width: 480px) {
+  .app-wrapper { border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  .header, .bottom-nav { left: 50%; transform: translateX(-50%); right: auto; width: 100%; max-width: 480px; }
+}
+</style>
+</head>
+
+<body>
+<!-- ============================================================
+     TOAST CONTAINER
+     ============================================================ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="header">
+  <div class="logo">⚡ SkillSnap</div>
+  <div class="header-right">
+    <div class="streak-badge" id="streakBadge">🔥 <span id="streakCount">0</span></div>
+    <div class="xp-badge" id="xpBadgeHeader" onclick="navigateTo('profile')">⭐ <span id="headerXP">0</span> XP</div>
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<!-- ============================================================
+     MAIN APP WRAPPER
+     ============================================================ -->
+<div class="app-wrapper">
+
+  <!-- ====== HOME / FEED SECTION ====== -->
+  <div class="section active" id="section-home">
+    <!-- Skeleton loader -->
+    <div id="skeletonLoader">
+      <div style="padding:12px 20px 8px;">
+        <div class="skeleton skeleton-line" style="width:120px;height:18px;"></div>
+      </div>
+      <div style="padding:0 20px 14px;display:flex;gap:8px;">
+        <div class="skeleton" style="width:80px;height:32px;border-radius:20px;"></div>
+        <div class="skeleton" style="width:80px;height:32px;border-radius:20px;"></div>
+        <div class="skeleton" style="width:60px;height:32px;border-radius:20px;"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-video"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line medium"></div>
+          <div class="skeleton skeleton-line short"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actual feed content -->
+    <div id="feedContent" class="hidden">
+      <div class="feed-header">
+        <h2 style="font-size:20px;font-weight:800;">For You 🎯</h2>
+      </div>
+      <div class="feed-filter" id="feedFilter">
+        <button class="filter-chip active" data-filter="all" onclick="filterFeed(this)">All</button>
+        <button class="filter-chip" data-filter="ai" onclick="filterFeed(this)">🤖 AI Tools</button>
+        <button class="filter-chip" data-filter="code" onclick="filterFeed(this)">💻 Coding</button>
+        <button class="filter-chip" data-filter="design" onclick="filterFeed(this)">🎨 Design</button>
+        <button class="filter-chip" data-filter="business" onclick="filterFeed(this)">💼 Business</button>
+        <button class="filter-chip" data-filter="productivity" onclick="filterFeed(this)">⚡ Productivity</button>
+      </div>
+      <div id="skillFeed"></div>
+    </div>
+  </div>
+
+  <!-- ====== TRENDING SECTION ====== -->
+  <div class="section" id="section-trending">
+    <div class="trending-header">
+      <h2 class="section-title">🔥 Trending</h2>
+      <div class="trending-fire">🚀</div>
+    </div>
+    <div class="trending-sort" id="trendingSort">
+      <button class="sort-btn active" onclick="sortTrending('likes', this)">❤️ Most Liked</button>
+      <button class="sort-btn" onclick="sortTrending('views', this)">👁️ Most Viewed</button>
+      <button class="sort-btn" onclick="sortTrending('new', this)">✨ Newest</button>
+    </div>
+    <div id="trendingList"></div>
+  </div>
+
+  <!-- ====== AI FEED SECTION ====== -->
+  <div class="section" id="section-ai">
+    <div class="feed-header">
+      <h2 style="font-size:20px;font-weight:800;">🤖 AI For You</h2>
+    </div>
+    <div class="ai-banner">
+      <div class="ai-icon">✨</div>
+      <div class="ai-text">
+        <h4>Personalized just for you</h4>
+        <p>Based on your interests & watch history</p>
+      </div>
+      <button class="ai-refresh" onclick="refreshAIFeed()">Refresh</button>
+    </div>
+    <div id="aiFeed"></div>
+  </div>
+
+  <!-- ====== UPLOAD SECTION ====== -->
+  <div class="section" id="section-upload">
+    <div class="upload-header">
+      <h2>🎬 Creator Studio</h2>
+      <p>Share your knowledge with the world</p>
+    </div>
+
+    <div class="monetize-banner">
+      <div class="monetize-icon">💰</div>
+      <div class="monetize-text">
+        <h4>Monetize Your Skills</h4>
+        <p>Earn from premium content</p>
+      </div>
+      <div class="monetize-badge">PRO</div>
+    </div>
+
+    <div class="publish-stats">
+      <div class="stat-card">
+        <div class="stat-num" id="creatorViews">0</div>
+        <div class="stat-label">Views</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="creatorPosts">0</div>
+        <div class="stat-label">Posts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="creatorLikes">0</div>
+        <div class="stat-label">Likes</div>
+      </div>
+    </div>
+
+    <div class="upload-form" style="margin-top:16px;">
+      <div class="form-group">
+        <label>Skill Title</label>
+        <input type="text" id="uploadTitle" placeholder="e.g. Master ChatGPT in 60 seconds" style="width:100%;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="uploadDesc" placeholder="What will people learn?"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="uploadCategory">
+          <option value="ai">🤖 AI Tools</option>
+          <option value="code">💻 Coding</option>
+          <option value="design">🎨 Design</option>
+          <option value="business">💼 Business</option>
+          <option value="productivity">⚡ Productivity</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Video URL (YouTube embed)</label>
+        <input type="text" id="uploadVideoUrl" placeholder="https://www.youtube.com/embed/..." style="width:100%;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;">
+      </div>
+      <div class="form-group">
+        <label>Tags (comma separated)</label>
+        <input type="text" id="uploadTags" placeholder="AI, ChatGPT, Productivity" style="width:100%;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;">
+      </div>
+      <button class="btn-primary" onclick="publishSkill()">🚀 Publish Skill</button>
+    </div>
+  </div>
+
+  <!-- ====== PROFILE SECTION ====== -->
+  <div class="section" id="section-profile">
+    <div class="profile-hero">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="profileAvatar">?</div>
+        <div class="profile-level" id="profileLevel">1</div>
+      </div>
+      <div class="profile-name" id="profileName">Guest User</div>
+      <div class="profile-handle" id="profileHandle">@guest</div>
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="profileXP">0</div>
+          <div class="profile-stat-label">XP</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="profileStreak">0</div>
+          <div class="profile-stat-label">Streak 🔥</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="profileWatched">0</div>
+          <div class="profile-stat-label">Watched</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- XP Progress -->
+    <div class="xp-progress-wrap">
+      <div class="xp-progress-header">
+        <div class="xp-progress-title">⭐ Level Progress</div>
+        <div class="xp-progress-val"><span id="progressXP">0</span> / <span id="progressMax">500</span> XP</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px;">
+        🎯 <span id="xpToNext">500</span> XP to next level
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="achievements-wrap">
+      <div class="achievements-title">🏆 Achievements</div>
+      <div class="achievements-grid" id="achievementsGrid"></div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard-wrap">
+      <div class="leaderboard-header">🥇 Weekly Leaderboard</div>
+      <div id="leaderboard"></div>
+    </div>
+
+    <!-- Auth buttons or logout -->
+    <div style="margin:16px;display:flex;gap:10px;" id="profileAuthBtns">
+      <button class="btn-primary" onclick="showAuthOverlay()" style="flex:1;" id="loginBtn">Login / Sign Up</button>
+    </div>
+
+    <div style="margin:0 16px 20px;" id="logoutWrap" class="hidden">
+      <button onclick="logout()" style="width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--accent2);font-family:'Syne',sans-serif;font-weight:700;font-size:15px;cursor:pointer;">🚪 Log Out</button>
+    </div>
+  </div>
+
+</div> <!-- /app-wrapper -->
+
+<!-- ============================================================
+     BOTTOM NAVIGATION
+     ============================================================ -->
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="navigateTo('home')">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-label">Home</div>
+  </button>
+  <button class="nav-item" id="nav-trending" onclick="navigateTo('trending')">
+    <div class="nav-icon">🔥</div>
+    <div class="nav-label">Trending</div>
+  </button>
+  <button class="nav-item" id="nav-upload" onclick="navigateTo('upload')">
+    <div class="nav-upload-btn">＋</div>
+    <div class="nav-label">Create</div>
+  </button>
+  <button class="nav-item" id="nav-ai" onclick="navigateTo('ai')">
+    <div class="nav-icon">🤖</div>
+    <div class="nav-label">AI Feed</div>
+  </button>
+  <button class="nav-item" id="nav-profile" onclick="navigateTo('profile')">
+    <div class="nav-icon">👤</div>
+    <div class="nav-label">Profile</div>
+  </button>
+</nav>
+
+<!-- ============================================================
+     INTEREST ONBOARDING OVERLAY
+     ============================================================ -->
+<div class="overlay" id="onboardingOverlay">
+  <div class="popup">
+    <h2>Welcome to SkillSnap! ⚡</h2>
+    <p>What do you want to learn? Pick your interests to personalize your feed.</p>
+    <div class="interest-grid" id="interestGrid">
+      <div class="interest-chip" data-interest="ai" onclick="toggleInterest(this)"><div class="emoji">🤖</div>AI Tools</div>
+      <div class="interest-chip" data-interest="code" onclick="toggleInterest(this)"><div class="emoji">💻</div>Coding</div>
+      <div class="interest-chip" data-interest="design" onclick="toggleInterest(this)"><div class="emoji">🎨</div>Design</div>
+      <div class="interest-chip" data-interest="business" onclick="toggleInterest(this)"><div class="emoji">💼</div>Business</div>
+      <div class="interest-chip" data-interest="productivity" onclick="toggleInterest(this)"><div class="emoji">⚡</div>Productivity</div>
+      <div class="interest-chip" data-interest="photo" onclick="toggleInterest(this)"><div class="emoji">📸</div>Photography</div>
+    </div>
+    <button class="btn-primary" onclick="saveInterests()">Start Learning 🚀</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     AUTH OVERLAY
+     ============================================================ -->
+<div class="overlay hidden" id="authOverlay">
+  <div class="auth-popup">
+    <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:20px;">Join SkillSnap ⚡</h2>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+      <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- Login Form -->
+    <div class="auth-form active" id="loginForm">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" onclick="doLogin()" style="margin-bottom:12px;">Login</button>
+      <button onclick="closeAuthOverlay()" style="width:100%;padding:12px;background:transparent;border:none;color:var(--text2);cursor:pointer;font-size:14px;">Cancel</button>
+    </div>
+
+    <!-- Signup Form -->
+    <div class="auth-form" id="signupForm">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="signupName" placeholder="Jane Doe">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signupEmail" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signupPass" placeholder="Min 6 characters">
+      </div>
+      <button class="btn-primary" onclick="doSignup()" style="margin-bottom:12px;">Create Account</button>
+      <button onclick="closeAuthOverlay()" style="width:100%;padding:12px;background:transparent;border:none;color:var(--text2);cursor:pointer;font-size:14px;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     COMMENTS OVERLAY
+     ============================================================ -->
+<div class="comments-overlay hidden" id="commentsOverlay">
+  <div class="comments-panel">
+    <div class="comments-header">
+      <h3>💬 Comments (<span id="commentCount">0</span>)</h3>
+      <button class="close-btn" onclick="closeComments()">✕</button>
+    </div>
+    <div class="comments-list" id="commentsList"></div>
+    <div class="comment-input-wrap">
+      <input type="text" class="comment-input" id="commentInput" placeholder="Add a comment..." onkeypress="if(event.key==='Enter') addComment()">
+      <button class="send-btn" onclick="addComment()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ============================================================
+// APP STATE
+// ============================================================
+let appState = {
+  currentSection: 'home',
+  theme: 'dark',
+  xp: 0,
+  streak: 0,
+  watched: 0,
+  level: 1,
+  interests: [],
+  user: null,
+  currentCommentCardId: null,
+  creatorPostCount: 0,
+};
+
+// ============================================================
+// SKILL DATA
+// ============================================================
+const skillsData = [
+  {
+    id: 1, category: 'ai',
+    title: 'Master ChatGPT Prompts in 60 Seconds',
+    desc: 'Learn the RACI framework to write prompts that get 10x better results from AI models every single time.',
+    creator: 'Alex Chen', creatorVerified: true,
+    videoUrl: 'https://www.youtube.com/embed/JTxsNm9IdYU?autoplay=0&mute=1',
+    thumb: 'https://img.youtube.com/vi/JTxsNm9IdYU/hqdefault.jpg',
+    tags: ['ChatGPT', 'AI', 'Prompts'],
+    duration: '0:58', likes: 4821, views: 32100, color: '#7C6EFF',
+  },
+  {
+    id: 2, category: 'code',
+    title: 'CSS Grid in 60 Seconds',
+    desc: 'Stop struggling with layouts! This one CSS Grid trick will change how you build web pages forever.',
+    creator: 'Maya Patel', creatorVerified: true,
+    videoUrl: 'https://www.youtube.com/embed/EiNiSFIPIQE?autoplay=0&mute=1',
+    thumb: 'https://img.youtube.com/vi/EiNiSFIPIQE/hqdefault.jpg',
+    tags: ['CSS', 'Grid', 'Web Dev'],
+    duration: '0:55', likes: 3102, views: 18900, color: '#00D4AA',
+  },
+  {
+    id: 3, category: 'design',
+    title: 'Photoshop Secret: Remove Any Background',
+    desc: 'The hidden Photoshop tool that removes complex backgrounds in under 5 clicks — designers hate this trick!',
+    creator: 'Jordan Lee', creatorVerified: false,
+    videoUrl: 'https://www.youtube.com/embed/KDYHUsHuFxk?autoplay=0&mute=1',
+    thumb: 'https://img.youtube.com/vi/KDYHUsHuFxk/hqdefault.jpg',
+    tags: ['Photoshop', 'Design', 'Tips'],
+    duration: '0:52', likes: 7643, views: 51000, color: '#FF6B6B',
+  },
+  {
+    id: 4, category: 'productivity',
+    title: 'The Notion Setup That Changed My Life',
+    desc: 'One template, infinite productivity. Build your entire life system in Notion using this 60-second method.',
+    creator: 'Sarah Kim', creatorVerified: true,
+    videoUrl: 'https://www.youtube.com/embed/ONG26-2mIHU?autoplay=0&mute=1',
+    thumb: 'https://img.youtube.com/vi/ONG26-2mIHU/hqdefault.jpg',
+    tags: ['Notion', 'Productivity', 'Organization'],
+    duration: '1:00', likes: 5890, views: 42300, color: '#FFB347',
+  },
+  {
+    id: 5, category: 'business',
+    title: 'Cold Email Formula that Gets 40% Reply Rate',
+    desc: 'The 3-line cold email structure used by top sales professionals. Works for job hunting, sales, and partnerships.',
+    creator: 'Marcus J.', creatorVerified: true,
+    videoUrl: 'https://www.youtube.com/embed/Il3fJeFMEIA?autoplay=0&mute=1',
+    thumb: 'https://img.youtube.com/vi/Il3fJeFMEIA/hqdefault.jpg',
+    tags: ['Sales', 'Email', 'Business'],
+    duration: '0:57', likes: 6231, views: 38700, color: '#A855F7',
+  },
+  {
+    id: 6, category: 'ai',
+    title: 'Build a Landing Page with AI (No Code)',
+    desc: 'Use Claude + Webflow to build a professional landing page in under a minute. No design skills needed.',
+    creator: 'Riya Sharma', creatorVerified: true,
+    videoUrl: 'https://www.youtube.com/embed/ZOGECFGHAjk?autoplay=0&mute=1',
+    thumb: 'https://img.youtube.com/vi/ZOGECFGHAjk/hqdefault.jpg',
+    tags: ['AI', 'No-Code', 'Landing Page'],
+    duration: '0:59', likes: 9102, views: 67400, color: '#7C6EFF',
+  },
+  {
+    id: 7, category: 'code',
+    title: 'JavaScript Array Methods You NEED to Know',
+    desc: 'map(), filter(), reduce() — master these 3 methods and your JS code will be 10x cleaner.',
+    creator: 'Dev Ninja', creatorVerified: false,
+    videoUrl: 'https://www.youtube.com/embed/R8rmfD9Y5-c?autoplay=0&mute=1',
+    thumb: 'https://img.youtube.com/vi/R8rmfD9Y5-c/hqdefault.jpg',
+    tags: ['JavaScript', 'Arrays', 'Coding'],
+    duration: '0:60', likes: 4509, views: 29800, color: '#00D4AA',
+  },
+  {
+    id: 8, category: 'design',
+    title: 'Figma Auto-Layout: The Secret Weapon',
+    desc: 'Most designers skip this feature. Auto-Layout will save you hours of manual alignment every week.',
+    creator: 'Lena V.', creatorVerified: true,
+    videoUrl: 'https://www.youtube.com/embed/TysvmViebhQ?autoplay=0&mute=1',
+    thumb: 'https://img.youtube.com/vi/TysvmViebhQ/hqdefault.jpg',
+    tags: ['Figma', 'UI Design', 'Auto-Layout'],
+    duration: '0:54', likes: 3877, views: 22100, color: '#FF6B6B',
+  },
+];
+
+// ============================================================
+// LEADERBOARD DATA
+// ============================================================
+const leaderboardData = [
+  { name: 'Alex Chen', xp: 12500, avatar: '🧑‍💻', color: '#7C6EFF' },
+  { name: 'Riya Sharma', xp: 11200, avatar: '👩‍🎨', color: '#FF6B6B' },
+  { name: 'Marcus J.', xp: 9800, avatar: '🧑‍💼', color: '#00D4AA' },
+  { name: 'Sarah Kim', xp: 8750, avatar: '👩‍💻', color: '#FFB347' },
+  { name: 'Jordan Lee', xp: 7300, avatar: '🧑‍🎨', color: '#A855F7' },
+];
+
+// ============================================================
+// ACHIEVEMENTS DATA
+// ============================================================
+const achievements = [
+  { icon: '🚀', name: 'First Watch', xpRequired: 0 },
+  { icon: '⚡', name: 'Speed Learner', xpRequired: 100 },
+  { icon: '🔥', name: '3-Day Streak', xpRequired: 200 },
+  { icon: '💎', name: 'Diamond Mind', xpRequired: 500 },
+  { icon: '🏆', name: 'Top Learner', xpRequired: 1000 },
+  { icon: '🎯', name: 'Goal Getter', xpRequired: 250 },
+  { icon: '🌟', name: 'Star Student', xpRequired: 750 },
+  { icon: '🤖', name: 'AI Master', xpRequired: 1500 },
+];
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  setTimeout(() => {
+    document.getElementById('skeletonLoader').classList.add('hidden');
+    document.getElementById('feedContent').classList.remove('hidden');
+    renderFeed(skillsData);
+    renderTrending();
+    renderAIFeed();
+    renderLeaderboard();
+    renderAchievements();
+    updateUI();
+  }, 1500);
+
+  // Check first visit
+  if (!localStorage.getItem('ss_visited')) {
+    document.getElementById('onboardingOverlay').classList.remove('hidden');
+  } else {
+    document.getElementById('onboardingOverlay').classList.add('hidden');
+  }
+
+  // Update streak
+  checkStreak();
+});
+
+// ============================================================
+// STATE MANAGEMENT
+// ============================================================
+function loadState() {
+  const saved = localStorage.getItem('ss_state');
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    Object.assign(appState, parsed);
+  }
+  const theme = localStorage.getItem('ss_theme') || 'dark';
+  setTheme(theme);
+}
+
+function saveState() {
+  localStorage.setItem('ss_state', JSON.stringify(appState));
+}
+
+function updateUI() {
+  document.getElementById('headerXP').textContent = appState.xp;
+  document.getElementById('streakCount').textContent = appState.streak;
+  document.getElementById('profileXP').textContent = appState.xp;
+  document.getElementById('profileStreak').textContent = appState.streak;
+  document.getElementById('profileWatched').textContent = appState.watched;
+  document.getElementById('progressXP').textContent = appState.xp % 500;
+  document.getElementById('progressMax').textContent = 500;
+  document.getElementById('xpToNext').textContent = 500 - (appState.xp % 500);
+  document.getElementById('progressFill').style.width = `${(appState.xp % 500) / 500 * 100}%`;
+  
+  const level = Math.floor(appState.xp / 500) + 1;
+  appState.level = level;
+  document.getElementById('profileLevel').textContent = level;
+
+  if (appState.user) {
+    document.getElementById('profileName').textContent = appState.user.name;
+    document.getElementById('profileHandle').textContent = '@' + appState.user.name.toLowerCase().replace(/\s+/g, '');
+    document.getElementById('profileAvatar').textContent = appState.user.name.charAt(0).toUpperCase();
+    document.getElementById('loginBtn').classList.add('hidden');
+    document.getElementById('logoutWrap').classList.remove('hidden');
+  } else {
+    document.getElementById('profileName').textContent = 'Guest User';
+    document.getElementById('profileHandle').textContent = '@guest';
+    document.getElementById('profileAvatar').textContent = '?';
+    document.getElementById('loginBtn').classList.remove('hidden');
+    document.getElementById('logoutWrap').classList.add('hidden');
+  }
+  renderAchievements();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function navigateTo(section) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`section-${section}`).classList.add('active');
+  const navEl = document.getElementById(`nav-${section}`);
+  if (navEl) navEl.classList.add('active');
+  appState.currentSection = section;
+  if (section === 'profile') updateUI();
+}
+
+// ============================================================
+// THEME
+// ============================================================
+function setTheme(theme) {
+  appState.theme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeToggle').textContent = theme === 'dark' ? '🌙' : '☀️';
+  localStorage.setItem('ss_theme', theme);
+}
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  setTheme(appState.theme === 'dark' ? 'light' : 'dark');
+  showToast(appState.theme === 'light' ? '☀️ Light mode on!' : '🌙 Dark mode on!', 'info');
+});
+
+// ============================================================
+// STREAK
+// ============================================================
+function checkStreak() {
+  const today = new Date().toDateString();
+  const lastVisit = localStorage.getItem('ss_lastVisit');
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+  if (lastVisit !== today) {
+    if (lastVisit === yesterday) {
+      appState.streak = (appState.streak || 0) + 1;
+    } else if (!lastVisit) {
+      appState.streak = 1;
+    } else {
+      appState.streak = 1;
+    }
+    localStorage.setItem('ss_lastVisit', today);
+    saveState();
+  }
+}
+
+// ============================================================
+// RENDER FEED
+// ============================================================
+function renderFeed(skills) {
+  const feed = document.getElementById('skillFeed');
+  feed.innerHTML = '';
+  skills.forEach((skill, i) => {
+    feed.appendChild(createSkillCard(skill, i));
+  });
+}
+
+function createSkillCard(skill, delay = 0) {
+  const savedCards = JSON.parse(localStorage.getItem('ss_saved') || '[]');
+  const likedCards = JSON.parse(localStorage.getItem('ss_liked') || '[]');
+  const isSaved = savedCards.includes(skill.id);
+  const isLiked = likedCards.includes(skill.id);
+  const comments = getComments(skill.id);
+
+  const card = document.createElement('div');
+  card.className = 'skill-card';
+  card.style.animationDelay = `${delay * 0.1}s`;
+  card.dataset.category = skill.category;
+  card.dataset.id = skill.id;
+
+  const catColors = {
+    ai: '#7C6EFF', code: '#00D4AA', design: '#FF6B6B',
+    business: '#A855F7', productivity: '#FFB347', photo: '#FF8C94'
+  };
+  const catColor = catColors[skill.category] || skill.color;
+
+  card.innerHTML = `
+    <div class="card-video-wrap">
+      <div class="card-video-thumb" id="thumb-${skill.id}" 
+           style="background-image:url('${skill.thumb}')"
+           onclick="loadVideo(${skill.id}, '${skill.videoUrl}')">
+        <div class="play-btn">▶</div>
+      </div>
+      <div class="card-duration">${skill.duration}</div>
+      <div class="card-category-badge" style="background:${catColor}22;color:${catColor};border:1px solid ${catColor}44;">
+        ${getCatEmoji(skill.category)} ${skill.category.toUpperCase()}
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="card-meta">
+        <div class="creator-avatar" style="background:linear-gradient(135deg,${catColor},${skill.color || '#5A4DFF'})">
+          ${skill.creator.charAt(0)}
+        </div>
+        <div class="creator-name">${skill.creator}</div>
+        ${skill.creatorVerified ? '<span class="creator-verified">✓</span>' : ''}
+        <span style="font-size:11px;color:var(--text3);margin-left:auto;">${formatNum(skill.views)} views</span>
+      </div>
+      <div class="card-title">${skill.title}</div>
+      <div class="card-desc">${skill.desc}</div>
+      <div class="card-tags">
+        ${skill.tags.map(t => `<span class="tag">#${t}</span>`).join('')}
+      </div>
+      <div class="card-actions">
+        <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${skill.id}, this)">
+          <span class="action-btn-icon">${isLiked ? '❤️' : '🤍'}</span>
+          <span id="likes-${skill.id}">${formatNum(skill.likes + (isLiked ? 0 : 0))}</span>
+        </button>
+        <button class="action-btn" onclick="openComments(${skill.id})">
+          <span class="action-btn-icon">💬</span>
+          <span>${comments.length}</span>
+        </button>
+        <button class="action-btn" onclick="shareSkill(${skill.id})">
+          <span class="action-btn-icon">↗</span>
+        </button>
+        <div class="spacer"></div>
+        <button class="action-btn ${isSaved ? 'saved' : ''}" onclick="toggleSave(${skill.id}, this)">
+          <span class="action-btn-icon">${isSaved ? '🔖' : '📌'}</span>
+          ${isSaved ? 'Saved' : 'Save'}
+        </button>
+        <span class="xp-reward">+25 XP</span>
+      </div>
+    </div>
+  `;
+  return card;
+}
+
+function getCatEmoji(cat) {
+  const map = { ai: '🤖', code: '💻', design: '🎨', business: '💼', productivity: '⚡', photo: '📸' };
+  return map[cat] || '📚';
+}
+
+function formatNum(n) {
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n;
+}
+
+// ============================================================
+// VIDEO
+// ============================================================
+function loadVideo(id, url) {
+  const thumb = document.getElementById(`thumb-${id}`);
+  const wrap = thumb.parentElement;
+  thumb.style.display = 'none';
+  const iframe = document.createElement('iframe');
+  iframe.src = url + '&autoplay=1';
+  iframe.allowFullscreen = true;
+  iframe.allow = 'autoplay; encrypted-media';
+  wrap.appendChild(iframe);
+
+  // Award XP
+  awardXP(25);
+  appState.watched++;
+  saveState();
+  updateUI();
+}
+
+// ============================================================
+// FILTER
+// ============================================================
+function filterFeed(el) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const filter = el.dataset.filter;
+  const filtered = filter === 'all' ? skillsData : skillsData.filter(s => s.category === filter);
+  renderFeed(filtered);
+}
+
+// ============================================================
+// LIKE / SAVE / SHARE
+// ============================================================
+function toggleLike(id, btn) {
+  const liked = JSON.parse(localStorage.getItem('ss_liked') || '[]');
+  const idx = liked.indexOf(id);
+  const skill = skillsData.find(s => s.id === id);
+
+  if (idx === -1) {
+    liked.push(id);
+    skill.likes++;
+    btn.classList.add('liked');
+    btn.querySelector('.action-btn-icon').textContent = '❤️';
+    showToast('❤️ Liked!', 'success');
+    awardXP(10);
+  } else {
+    liked.splice(idx, 1);
+    skill.likes--;
+    btn.classList.remove('liked');
+    btn.querySelector('.action-btn-icon').textContent = '🤍';
+    showToast('💔 Unliked', 'info');
+  }
+  btn.querySelector(`#likes-${id}`) && (btn.querySelector(`span:last-of-type`).textContent = formatNum(skill.likes));
+  document.getElementById(`likes-${id}`).textContent = formatNum(skill.likes);
+  localStorage.setItem('ss_liked', JSON.stringify(liked));
+}
+
+function toggleSave(id, btn) {
+  const saved = JSON.parse(localStorage.getItem('ss_saved') || '[]');
+  const idx = saved.indexOf(id);
+
+  if (idx === -1) {
+    saved.push(id);
+    btn.classList.add('saved');
+    btn.querySelector('.action-btn-icon').textContent = '🔖';
+    btn.childNodes[btn.childNodes.length - 1].textContent = 'Saved';
+    showToast('🔖 Saved to collection!', 'success');
+    awardXP(5);
+  } else {
+    saved.splice(idx, 1);
+    btn.classList.remove('saved');
+    btn.querySelector('.action-btn-icon').textContent = '📌';
+    btn.childNodes[btn.childNodes.length - 1].textContent = 'Save';
+    showToast('📌 Removed from saved', 'info');
+  }
+  localStorage.setItem('ss_saved', JSON.stringify(saved));
+}
+
+function shareSkill(id) {
+  const skill = skillsData.find(s => s.id === id);
+  if (navigator.share) {
+    navigator.share({ title: skill.title, text: skill.desc, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      showToast('🔗 Link copied!', 'info');
+    });
+  }
+}
+
+// ============================================================
+// XP SYSTEM
+// ============================================================
+function awardXP(amount) {
+  const oldLevel = Math.floor(appState.xp / 500) + 1;
+  appState.xp += amount;
+  const newLevel = Math.floor(appState.xp / 500) + 1;
+  saveState();
+  updateUI();
+
+  showToast(`⭐ +${amount} XP earned!`, 'xp');
+
+  if (newLevel > oldLevel) {
+    setTimeout(() => showToast(`🎉 Level Up! You're now Level ${newLevel}!`, 'success'), 500);
+  }
+}
+
+// ============================================================
+// COMMENTS
+// ============================================================
+function getComments(cardId) {
+  const all = JSON.parse(localStorage.getItem('ss_comments') || '{}');
+  return all[cardId] || [];
+}
+
+function openComments(cardId) {
+  appState.currentCommentCardId = cardId;
+  document.getElementById('commentsOverlay').classList.remove('hidden');
+  renderComments(cardId);
+}
+
+function closeComments() {
+  document.getElementById('commentsOverlay').classList.add('hidden');
+  appState.currentCommentCardId = null;
+}
+
+function renderComments(cardId) {
+  const comments = getComments(cardId);
+  document.getElementById('commentCount').textContent = comments.length;
+  const list = document.getElementById('commentsList');
+  list.innerHTML = '';
+
+  if (comments.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text3);padding:20px;font-size:14px;">No comments yet. Be first! 💬</div>';
+    return;
+  }
+
+  comments.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'comment-item';
+    el.innerHTML = `
+      <div class="comment-avatar">${c.user.charAt(0)}</div>
+      <div class="comment-bubble">
+        <div class="comment-user">${c.user}</div>
+        <div class="comment-text">${c.text}</div>
+        <div class="comment-time">${c.time}</div>
+      </div>
+    `;
+    list.appendChild(el);
+  });
+}
+
+function addComment() {
+  const input = document.getElementById('commentInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const all = JSON.parse(localStorage.getItem('ss_comments') || '{}');
+  if (!all[appState.currentCommentCardId]) all[appState.currentCommentCardId] = [];
+
+  const user = appState.user ? appState.user.name : 'Anonymous';
+  all[appState.currentCommentCardId].push({
+    user,
+    text,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  });
+
+  localStorage.setItem('ss_comments', JSON.stringify(all));
+  input.value = '';
+  renderComments(appState.currentCommentCardId);
+  awardXP(5);
+  showToast('💬 Comment added!', 'success');
+}
+
+// ============================================================
+// TRENDING
+// ============================================================
+function renderTrending(sortBy = 'likes') {
+  const list = document.getElementById('trendingList');
+  list.innerHTML = '';
+
+  const sorted = [...skillsData].sort((a, b) => {
+    if (sortBy === 'likes') return b.likes - a.likes;
+    if (sortBy === 'views') return b.views - a.views;
+    return b.id - a.id;
+  });
+
+  sorted.forEach((skill, i) => {
+    const el = document.createElement('div');
+    el.className = 'trending-card';
+    el.style.animationDelay = `${i * 0.08}s`;
+    el.onclick = () => {
+      navigateTo('home');
+      setTimeout(() => {
+        const card = document.querySelector(`[data-id="${skill.id}"]`);
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    };
+
+    el.innerHTML = `
+      <div class="trending-rank ${i < 3 ? 'top' : ''}">${i + 1}</div>
+      <div class="trending-thumb" style="background-image:url('${skill.thumb}')"></div>
+      <div class="trending-info">
+        <div class="trending-title">${skill.title}</div>
+        <div class="trending-stats">
+          <div class="trending-stat">❤️ ${formatNum(skill.likes)}</div>
+          <div class="trending-stat">👁️ ${formatNum(skill.views)}</div>
+          <div class="trending-stat">⏱️ ${skill.duration}</div>
+        </div>
+      </div>
+      ${i === 0 ? '<div class="trending-fire">🔥</div>' : ''}
+    `;
+    list.appendChild(el);
+  });
+}
+
+function sortTrending(by, btn) {
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTrending(by);
+}
+
+// ============================================================
+// AI FEED
+// ============================================================
+function renderAIFeed() {
+  const interests = JSON.parse(localStorage.getItem('ss_interests') || '[]');
+  let filtered = interests.length
+    ? skillsData.filter(s => interests.includes(s.category))
+    : skillsData;
+
+  // Add some randomness to simulate AI
+  filtered = [...filtered].sort(() => Math.random() - 0.4);
+
+  const feed = document.getElementById('aiFeed');
+  feed.innerHTML = '';
+  filtered.forEach((skill, i) => feed.appendChild(createSkillCard(skill, i)));
+
+  if (filtered.length === 0) {
+    feed.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--text2);">Select interests to get personalized content!</div>';
+  }
+}
+
+function refreshAIFeed() {
+  showToast('🤖 AI refreshing your feed...', 'info');
+  document.getElementById('aiFeed').innerHTML = '<div style="padding:20px 16px;"><div class="skeleton" style="height:200px;border-radius:16px;margin-bottom:16px;"></div><div class="skeleton" style="height:14px;width:80%;border-radius:8px;margin-bottom:10px;"></div></div>';
+  setTimeout(() => { renderAIFeed(); showToast('✨ Feed updated!', 'success'); }, 1000);
+}
+
+// ============================================================
+// ONBOARDING
+// ============================================================
+function toggleInterest(el) {
+  el.classList.toggle('selected');
+}
+
+function saveInterests() {
+  const selected = Array.from(document.querySelectorAll('.interest-chip.selected')).map(el => el.dataset.interest);
+  if (selected.length === 0) {
+    showToast('⚠️ Pick at least one interest!', 'error');
+    return;
+  }
+  localStorage.setItem('ss_interests', JSON.stringify(selected));
+  localStorage.setItem('ss_visited', '1');
+  appState.interests = selected;
+  document.getElementById('onboardingOverlay').classList.add('hidden');
+  renderAIFeed();
+  showToast('🎉 Welcome to SkillSnap!', 'success');
+  awardXP(50);
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function showAuthOverlay() { document.getElementById('authOverlay').classList.remove('hidden'); }
+function closeAuthOverlay() { document.getElementById('authOverlay').classList.add('hidden'); }
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+  document.querySelector(`.auth-tab:${tab === 'login' ? 'first-child' : 'last-child'}`).classList.add('active');
+  document.getElementById(`${tab}Form`).classList.add('active');
+}
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if (!email || !pass) { showToast('⚠️ Fill in all fields!', 'error'); return; }
+
+  const users = JSON.parse(localStorage.getItem('ss_users') || '[]');
+  const user = users.find(u => u.email === email && u.password === pass);
+
+  if (!user) { showToast('❌ Invalid credentials!', 'error'); return; }
+
+  appState.user = { name: user.name, email: user.email };
+  saveState();
+  closeAuthOverlay();
+  updateUI();
+  showToast(`👋 Welcome back, ${user.name}!`, 'success');
+}
+
+function doSignup() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const pass = document.getElementById('signupPass').value;
+
+  if (!name || !email || !pass) { showToast('⚠️ Fill in all fields!', 'error'); return; }
+  if (pass.length < 6) { showToast('⚠️ Password must be 6+ chars!', 'error'); return; }
+
+  const users = JSON.parse(localStorage.getItem('ss_users') || '[]');
+  if (users.find(u => u.email === email)) { showToast('❌ Email already registered!', 'error'); return; }
+
+  users.push({ name, email, password: pass });
+  localStorage.setItem('ss_users', JSON.stringify(users));
+
+  appState.user = { name, email };
+  saveState();
+  closeAuthOverlay();
+  updateUI();
+  showToast(`🎉 Account created! Welcome, ${name}!`, 'success');
+  awardXP(100);
+}
+
+function logout() {
+  appState.user = null;
+  saveState();
+  updateUI();
+  showToast('👋 Logged out!', 'info');
+}
+
+// ============================================================
+// CREATOR DASHBOARD
+// ============================================================
+function publishSkill() {
+  const title = document.getElementById('uploadTitle').value.trim();
+  const desc = document.getElementById('uploadDesc').value.trim();
+  const category = document.getElementById('uploadCategory').value;
+  const videoUrl = document.getElementById('uploadVideoUrl').value.trim();
+  const tags = document.getElementById('uploadTags').value.split(',').map(t => t.trim()).filter(Boolean);
+
+  if (!title || !desc) { showToast('⚠️ Title and description required!', 'error'); return; }
+
+  const newSkill = {
+    id: Date.now(),
+    category,
+    title,
+    desc,
+    creator: appState.user ? appState.user.name : 'Anonymous',
+    creatorVerified: false,
+    videoUrl: videoUrl || 'https://www.youtube.com/embed/JTxsNm9IdYU',
+    thumb: `https://img.youtube.com/vi/${extractYtId(videoUrl)}/hqdefault.jpg`,
+    tags: tags.length ? tags : [category],
+    duration: '0:60',
+    likes: 0, views: 0,
+    color: '#7C6EFF',
+  };
+
+  skillsData.unshift(newSkill);
+  appState.creatorPostCount = (appState.creatorPostCount || 0) + 1;
+
+  // Update creator stats
+  document.getElementById('creatorPosts').textContent = appState.creatorPostCount;
+
+  // Clear form
+  ['uploadTitle', 'uploadDesc', 'uploadVideoUrl', 'uploadTags'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  showToast('🚀 Skill published!', 'success');
+  awardXP(100);
+
+  setTimeout(() => {
+    navigateTo('home');
+    renderFeed(skillsData);
+  }, 800);
+}
+
+function extractYtId(url) {
+  if (!url) return 'JTxsNm9IdYU';
+  const match = url.match(/embed\/([^?&]+)/);
+  return match ? match[1] : 'JTxsNm9IdYU';
+}
+
+// ============================================================
+// LEADERBOARD
+// ============================================================
+function renderLeaderboard() {
+  const lb = document.getElementById('leaderboard');
+  const myXP = appState.xp;
+  const myName = appState.user ? appState.user.name : 'You';
+
+  const allEntries = [
+    ...leaderboardData,
+    { name: myName, xp: myXP, avatar: '⭐', color: '#7C6EFF', isMe: true }
+  ].sort((a, b) => b.xp - a.xp);
+
+  lb.innerHTML = '';
+  allEntries.slice(0, 6).forEach((entry, i) => {
+    const el = document.createElement('div');
+    el.className = `leaderboard-item ${entry.isMe ? 'me' : ''}`;
+    const medals = ['🥇', '🥈', '🥉'];
+    el.innerHTML = `
+      <div class="lb-rank">${medals[i] || i + 1}</div>
+      <div class="lb-avatar" style="background:${entry.color}">${entry.avatar}</div>
+      <div class="lb-name">${entry.name} ${entry.isMe ? '(You)' : ''}</div>
+      <div class="lb-xp">⭐ ${formatNum(entry.xp)}</div>
+    `;
+    lb.appendChild(el);
+  });
+}
+
+// ============================================================
+// ACHIEVEMENTS
+// ============================================================
+function renderAchievements() {
+  const grid = document.getElementById('achievementsGrid');
+  grid.innerHTML = '';
+  achievements.forEach(a => {
+    const el = document.createElement('div');
+    el.className = `achievement ${appState.xp >= a.xpRequired ? '' : 'locked'}`;
+    el.title = `${a.name} — Requires ${a.xpRequired} XP`;
+    el.innerHTML = `<div class="badge">${a.icon}</div><div class="badge-name">${a.name}</div>`;
+    el.onclick = () => {
+      if (appState.xp >= a.xpRequired) showToast(`${a.icon} ${a.name} unlocked!`, 'success');
+      else showToast(`🔒 Need ${a.xpRequired} XP to unlock!`, 'info');
+    };
+    grid.appendChild(el);
+  });
+}
+
+// ============================================================
+// TOAST NOTIFICATIONS
+// ============================================================
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+
+  const icons = { success: '✅', error: '❌', info: 'ℹ️', xp: '⭐' };
+  toast.innerHTML = `<span class="toast-icon">${icons[type] || 'ℹ️'}</span><span>${message}</span>`;
+
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('toast-fade');
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+// ============================================================
+// INTERSECTION OBSERVER (Auto-XP on scroll)
+// ============================================================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.2 });
+
+// Observe skill cards dynamically
+const feedMutationObserver = new MutationObserver(() => {
+  document.querySelectorAll('.skill-card').forEach(card => {
+    observer.observe(card);
+  });
+});
+
+feedMutationObserver.observe(document.body, { childList: true, subtree: true });
+</script>
+
+</body>
+</html>
